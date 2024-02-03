@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="mt-20 flex">
+    <main className="mt-12 flex p-4">
       <div className="m-auto">
         <Image
           src="/logo.svg"

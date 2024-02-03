@@ -11,17 +11,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { nanoid } from "nanoid";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CreatePage() {
   const [name, setName] = useState("");
   const [points, setPoints] = useState("scrum");
-  const [token, setToken] = useState("");
 
+  const router = useRouter();
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log({ name, points, token });
+    const roomId = nanoid(10);
+    router.push(`/room/${roomId}`);
   }
 
   return (
@@ -68,29 +71,7 @@ export default function CreatePage() {
             </SelectContent>
           </Select>
         </div>
-        <div className="mt-3">
-          <Label htmlFor="jira-token">Jira token (optional)</Label>
-          <Input
-            id="jira-token"
-            type="password"
-            value={token}
-            onChange={(e) => {
-              setToken(e.target.value);
-            }}
-          />
-          <div className="mt-1 text-xs text-neutral-400">
-            You can generate a new token{" "}
-            <a
-              href="https://id.atlassian.com/manage-profile/security/api-tokens"
-              target="_blank"
-              className="text-blue-400 hover:underline"
-            >
-              here
-            </a>
-            .
-          </div>
-        </div>
-        <div className="mt-4">
+        <div className="mt-6">
           <Button disabled={!name || !points}>Create room</Button>
           <Button className="ml-2" variant="ghost" asChild>
             <Link href="/">Cancel</Link>

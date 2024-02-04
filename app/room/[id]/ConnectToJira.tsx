@@ -1,9 +1,14 @@
 import { Button } from "@/components/ui/button";
 
-export default function ConnectToJira({ state }: { state: string }) {
+export function ConnectToJira({ state }: { state: string }) {
   const jiraClientId = process.env.NEXT_PUBLIC_JIRA_CLIENT_ID!;
   const jiraCallbackUrl = process.env.NEXT_PUBLIC_JIRA_CALLBACK_URL!;
-  const jiraScopes = ["offline_access", "read:jira-work", "write:jira-work"];
+  const jiraScopes = [
+    "offline_access",
+    "read:jira-work",
+    "write:jira-work",
+    "read:sprint:jira-software",
+  ];
   const jiraAuthUrl = "https://auth.atlassian.com/authorize";
   const jiraAuthParams = new URLSearchParams({
     audience: "api.atlassian.com",

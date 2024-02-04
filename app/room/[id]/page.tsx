@@ -3,12 +3,17 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import ConnectToJira from "./ConnectToJira";
+import { ConnectToJira } from "./ConnectToJira";
 import { useEffect, useState } from "react";
+import { JiraProjects } from "./JiraProjects";
+import { JiraBoards } from "./JiraBoards";
+import { JiraSprints } from "./JiraSprints";
 
 export default function RoomPage(props: { params: { id: string } }) {
   const [token, setToken] = useState("");
   const [cloudId, setCloudId] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const [boardId, setBoardId] = useState("");
 
   function setJira(storage: string) {
     try {
@@ -57,8 +62,29 @@ export default function RoomPage(props: { params: { id: string } }) {
         <div>Room ID: {props.params.id}</div>
         {token && cloudId ? (
           <div>
-            <div>Token: {token}</div>
-            <div>Cloud ID: {cloudId}</div>
+            <Button
+              onClick={() => {
+                localStorage.removeItem("jira");
+                setToken("");
+                setCloudId("");
+              }}
+            >
+              Clear storage
+            </Button>
+            <JiraProjects
+              projectId={projectId}
+              onSelectProject={(id) => {
+                setProjectId(id);
+              }}
+            />
+            <JiraBoards
+              boardId={boardId}
+              projectId={projectId}
+              onSelectBoard={(id) => {
+                setBoardId(id);
+              }}
+            />
+            <JiraSprints boardId={boardId} />
           </div>
         ) : (
           <div>

@@ -46,7 +46,7 @@ export function fetchSprints(boardId: string) {
 export function fetchIssues(sprintId: string) {
   const params = new URLSearchParams({
     fields: "summary",
-    jql: "issuetype != Epic AND statusCategory != Done",
+    jql: 'issuetype != Epic AND statusCategory != Done AND "story point estimate" = null AND "story points" = null',
   });
 
   return jiraRequest(

@@ -14,13 +14,17 @@ export function JiraBoards({ boardId, projectId, onSelectBoard }: Props) {
 
   useEffect(() => {
     if (projectId) {
-      fetchBoards(projectId).then((boards: any) => {
-        const orderedBoards = boards.values.sort((a: any) => {
-          return a.type === "scrum" ? -1 : 1;
+      fetchBoards(projectId)
+        .then((boards: any) => {
+          const orderedBoards = boards.values.sort((a: any) => {
+            return a.type === "scrum" ? -1 : 1;
+          });
+          setBoards(orderedBoards);
+          onSelectBoard(orderedBoards[0].id);
+        })
+        .catch(() => {
+          setBoards([]);
         });
-        setBoards(orderedBoards);
-        onSelectBoard(orderedBoards[0].id);
-      });
     } else {
       setBoards([]);
       onSelectBoard("");

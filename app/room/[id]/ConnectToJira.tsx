@@ -8,6 +8,8 @@ export function ConnectToJira({ state }: { state: string }) {
     "read:jira-work",
     "write:jira-work",
     "read:sprint:jira-software",
+    "read:issue-details:jira",
+    "read:jql:jira",
   ];
   const jiraAuthUrl = "https://auth.atlassian.com/authorize";
   const jiraAuthParams = new URLSearchParams({

@@ -26,19 +26,30 @@ async function jiraRequest(url: string) {
     },
   );
 
-  return res.json();
+  if (res.ok) return res.json();
+
+  throw new Error(res.statusText);
 }
 
-export async function fetchProjects(search = "") {
-  return await jiraRequest(`rest/api/3/project/search?query=${search}`);
+export function fetchProjects(search = "") {
+  return jiraRequest(`rest/api/3/project/search?query=${search}`);
 }
 
-export async function fetchBoards(projectId: string) {
-  return await jiraRequest(`rest/agile/1.0/board?projectKeyOrId=${projectId}`);
+export function fetchBoards(projectId: string) {
+  return jiraRequest(`rest/agile/1.0/board?projectKeyOrId=${projectId}`);
 }
 
-export async function fetchSprints(boardId: string) {
-  return await jiraRequest(
-    `rest/agile/1.0/board/${boardId}/sprint?state=future`,
+export function fetchSprints(boardId: string) {
+  return jiraRequest(`rest/agile/1.0/board/${boardId}/sprint?state=future`);
+}
+
+export function fetchIssues(sprintId: string) {
+  const params = new URLSearchParams({
+    fields: "summary",
+    jql: "issuetype != Epic AND statusCategory != Done",
+  });
+
+  return jiraRequest(
+    `rest/agile/1.0/sprint/${sprintId}/issue?${params.toString()}`,
   );
 }

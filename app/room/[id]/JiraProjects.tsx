@@ -23,9 +23,14 @@ export function JiraProjects({ projectId, onSelectProject }: Props) {
   const [searchProject, setSearchProject] = useState("");
 
   useEffect(() => {
-    fetchProjects(searchProject).then((projects: any) => {
-      setProjects(projects.values);
-    });
+    fetchProjects(searchProject)
+      .then((projects: any) => {
+        setProjects(projects.values);
+      })
+      .catch(() => {
+        console.log("error");
+        setProjects([]);
+      });
   }, [searchProject]);
 
   const selectedProject = projects.find(

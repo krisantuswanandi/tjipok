@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchSprints } from "./services";
+import { JiraSprint } from "./JiraSprint";
 
 interface Props {
   boardId: string;
@@ -12,9 +13,13 @@ export function JiraSprints({ boardId }: Props) {
 
   useEffect(() => {
     if (boardId) {
-      fetchSprints(boardId).then((sprints: any) => {
-        setSprints(sprints.values);
-      });
+      fetchSprints(boardId)
+        .then((sprints: any) => {
+          setSprints(sprints.values);
+        })
+        .catch(() => {
+          setSprints([]);
+        });
     }
   }, [boardId]);
 
@@ -25,13 +30,11 @@ export function JiraSprints({ boardId }: Props) {
   return (
     <div>
       <div className="mt-4 text-lg font-bold">Sprints</div>
-      <ol className="list-decimal">
+      <div>
         {sprints.map((sprint: any) => (
-          <li key={sprint.id}>
-            <span>{sprint.name}</span>
-          </li>
+          <JiraSprint key={sprint.id} sprint={sprint} />
         ))}
-      </ol>
+      </div>
     </div>
   );
 }

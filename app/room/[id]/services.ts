@@ -31,8 +31,8 @@ async function jiraRequest(url: string) {
   throw new Error(res.statusText);
 }
 
-export function fetchProjects(search = "") {
-  return jiraRequest(`rest/api/3/project/search?query=${search}`);
+export function fetchProjects(page = 0) {
+  return jiraRequest(`rest/api/3/project/search?startAt=${page}`);
 }
 
 export function fetchBoards(projectId: string) {

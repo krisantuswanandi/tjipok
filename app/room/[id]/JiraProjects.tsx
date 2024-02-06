@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { fetchProjects } from "./services";
 import { LuCheck, LuChevronsUpDown } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 interface Props {
   projectId: string;
@@ -24,18 +25,23 @@ interface Props {
 }
 
 export function JiraProjects({ projectId, onSelectProject }: Props) {
-  const [projects, setProjects] = useState<any>([]);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    fetchProjects()
-      .then((projects: any) => {
-        setProjects(projects.values);
-      })
-      .catch(() => {
-        setProjects([]);
-      });
-  }, []);
+  const { data, isFetching, hasNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: ["projects"],
+    queryFn: async ({ pageParam }) => {
+      return await fetchProjects(pageParam);
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.isLast) return;
+      return lastPage.startAt + lastPage.maxResults;
+    },
+  });
+
+  if (!isFetching && hasNextPage) fetchNextPage();
+
+  const projects = data ? data.pages.flatMap((page) => page.values) : [];
 
   const selectedProject = projects.find(
     (project: any) => project.id === projectId,

@@ -71,20 +71,22 @@ export default function RoomPage(props: { params: { id: string } }) {
             >
               Clear storage
             </Button>
-            <JiraProjects
-              projectId={projectId}
-              onSelectProject={(id) => {
-                setProjectId(id);
-              }}
-            />
-            <JiraBoards
-              boardId={boardId}
-              projectId={projectId}
-              onSelectBoard={(id) => {
-                setBoardId(id);
-              }}
-            />
-            <JiraSprints boardId={boardId} />
+            <div className="mt-4">
+              <JiraProjects
+                projectId={projectId}
+                onSelectProject={(id) => {
+                  setProjectId(id);
+                }}
+              />
+              <JiraBoards
+                boardId={boardId}
+                projectId={projectId}
+                onSelectBoard={(id) => {
+                  setBoardId(id);
+                }}
+              />
+              <JiraSprints boardId={boardId} />
+            </div>
           </div>
         ) : (
           <div>

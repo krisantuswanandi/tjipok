@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { fetchProjects } from "./services";
-
-function debounce(fn: any, delay: number) {
-  let timeoutId: any;
-  return function (...args: any) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      fn(...args);
-    }, delay);
-  };
-}
+import { LuCheck, LuChevronsUpDown } from "react-icons/lu";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface Props {
   projectId: string;
@@ -20,66 +25,70 @@ interface Props {
 
 export function JiraProjects({ projectId, onSelectProject }: Props) {
   const [projects, setProjects] = useState<any>([]);
-  const [searchProject, setSearchProject] = useState("");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    fetchProjects(searchProject)
+    fetchProjects()
       .then((projects: any) => {
         setProjects(projects.values);
       })
       .catch(() => {
-        console.log("error");
         setProjects([]);
       });
-  }, [searchProject]);
+  }, []);
 
   const selectedProject = projects.find(
     (project: any) => project.id === projectId,
   );
 
   return (
-    <div>
-      <div className="mt-4 text-lg font-bold">Projects</div>
-      {selectedProject ? (
-        <div>
-          <div>
-            <span>{selectedProject.name}</span>{" "}
-            <strong>({selectedProject.key})</strong>
-            <button
-              className="ml-4 text-blue-500 underline"
-              onClick={() => {
-                setSearchProject("");
-                onSelectProject("");
-              }}
-            >
-              Change project
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div>
-            <input
-              className="rounded border border-neutral-500"
-              onChange={debounce((event: any) => {
-                setSearchProject(event.target.value);
-              }, 600)}
-            />
-          </div>
-          <ol className="list-decimal">
-            {projects.map((project: any) => (
-              <li
-                key={project.id}
-                onClick={() => {
-                  onSelectProject(project.id);
-                }}
-              >
-                <span>{project.name}</span> <strong>({project.key})</strong>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
-    </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-64 justify-between"
+        >
+          {selectedProject ? (
+            <span className="truncate">
+              <strong>{selectedProject.key}</strong>
+              {` - ${selectedProject.name}`}
+            </span>
+          ) : (
+            "Select project..."
+          )}
+          <LuChevronsUpDown className="ml-1 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search project..." />
+          <CommandList>
+            <CommandEmpty>No project found.</CommandEmpty>
+            <CommandGroup>
+              {projects.map((project: any) => (
+                <CommandItem
+                  key={project.id}
+                  value={`${project.key} ${project.name}`}
+                  onSelect={() => {
+                    onSelectProject(project.id);
+                    setOpen(false);
+                  }}
+                >
+                  <LuCheck
+                    className={`mr-2 h-4 w-4 ${projectId === project.id ? "opacity-100" : "opacity-0"}`}
+                  />
+                  <span className="truncate">
+                    <strong>{project.key}</strong>
+                    {` - ${project.name}`}
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

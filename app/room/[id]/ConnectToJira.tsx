@@ -6,10 +6,11 @@ export function ConnectToJira({ state }: { state: string }) {
   const jiraScopes = [
     "offline_access",
     "read:jira-work",
-    "write:jira-work",
-    "read:sprint:jira-software",
     "read:issue-details:jira",
     "read:jql:jira",
+    "read:project:jira",
+    "read:sprint:jira-software",
+    "read:board-scope:jira-software",
   ];
   const jiraAuthUrl = "https://auth.atlassian.com/authorize";
   const jiraAuthParams = new URLSearchParams({

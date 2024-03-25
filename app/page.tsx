@@ -11,6 +11,7 @@ export default function Home() {
           alt="Tjipok"
           width={180}
           height={280}
+          priority={true}
           className="rounded-xl shadow-md shadow-neutral-400/50"
         />
         <h1 className="-mr-0.5 mt-2 text-center text-4xl font-bold tracking-widest">

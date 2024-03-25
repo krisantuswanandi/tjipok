@@ -1,8 +1,8 @@
-# Jipok
+# Tjipok
 
-Firepoker clone, integrated with Jira.
+a.k.a The Jira Poker, a Firepoker clone with Jira integration.
 
-## Developmentc
+## Development
 
 To start the development server, run:
 

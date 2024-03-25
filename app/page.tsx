@@ -8,13 +8,13 @@ export default function Home() {
       <div className="m-auto">
         <Image
           src="/logo.svg"
-          alt="Jipok"
+          alt="Tjipok"
           width={180}
           height={280}
           className="rounded-xl shadow-md shadow-neutral-400/50"
         />
-        <h1 className="-mr-0.5 mt-2 text-center text-5xl font-bold tracking-widest">
-          JIPOK
+        <h1 className="-mr-0.5 mt-2 text-center text-4xl font-bold tracking-widest">
+          TJIPOK
         </h1>
         <div className="mt-20 text-center">
           <Button asChild>

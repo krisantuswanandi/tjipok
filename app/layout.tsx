@@ -6,8 +6,8 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Jipok",
-  description: "Firepoker clone, integrated with Jira.",
+  title: "Tjipok",
+  description: "Firepoker clone with Jira integration.",
   icons: "/jira.png",
 };
 

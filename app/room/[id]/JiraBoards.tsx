@@ -1,7 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { fetchBoards } from "./services";
+import { LuCheck, LuChevronsUpDown } from "react-icons/lu";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 interface Props {
   boardId: string;
@@ -10,50 +26,77 @@ interface Props {
 }
 
 export function JiraBoards({ boardId, projectId, onSelectBoard }: Props) {
-  const [boards, setBoards] = useState<any>([]);
+  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (projectId) {
-      fetchBoards(projectId)
-        .then((boards: any) => {
-          const orderedBoards = boards.values.sort((a: any) => {
-            return a.type === "scrum" ? -1 : 1;
-          });
-          setBoards(orderedBoards);
-          onSelectBoard(orderedBoards[0].id);
-        })
-        .catch(() => {
-          setBoards([]);
-        });
-    } else {
-      setBoards([]);
-      onSelectBoard("");
-    }
-  }, [projectId, onSelectBoard]);
+  const { data, isFetching, hasNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: ["boards", projectId],
+    queryFn: async ({ pageParam }) => {
+      return await fetchBoards(projectId, pageParam);
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.isLast) return;
+      return lastPage.startAt + lastPage.maxResults;
+    },
+    enabled: !!projectId,
+  });
 
-  if (!projectId) {
-    return null;
+  if (!isFetching && hasNextPage) fetchNextPage();
+
+  const boards = data ? data.pages.flatMap((page) => page.values) : [];
+  const orderedBoards = boards.sort((a: any) => {
+    return a.type === "scrum" ? -1 : 1;
+  });
+
+  const selectedBoard = boards.find((board: any) => board.id === boardId);
+
+  if (!boardId && orderedBoards.length > 0) {
+    onSelectBoard(orderedBoards[0].id);
   }
 
   return (
-    <div>
-      <div className="mt-4 text-lg font-bold">Boards</div>
-      <ol className="list-decimal">
-        {boards.map((board: any) => (
-          <li
-            key={board.id}
-            onClick={() => {
-              onSelectBoard(board.id);
-            }}
-          >
-            {boardId === board.id ? (
-              <strong>{board.name}</strong>
-            ) : (
-              <span>{board.name}</span>
-            )}
-          </li>
-        ))}
-      </ol>
-    </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-64 justify-between"
+          disabled={!projectId}
+        >
+          {selectedBoard ? (
+            <span className="truncate">{selectedBoard.name}</span>
+          ) : (
+            "Select board..."
+          )}
+          <LuChevronsUpDown className="ml-1 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search board..." />
+          <CommandList>
+            <CommandEmpty>No board found.</CommandEmpty>
+            <CommandGroup>
+              {orderedBoards.map((board: any) => (
+                <CommandItem
+                  key={board.id}
+                  value={`${board.key} ${board.name}`}
+                  onSelect={() => {
+                    onSelectBoard(board.id);
+                    setOpen(false);
+                  }}
+                >
+                  <LuCheck
+                    className={`mr-2 h-4 w-4 ${boardId === board.id ? "opacity-100" : "opacity-0"}`}
+                  />
+                  <span className="truncate">{board.name}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

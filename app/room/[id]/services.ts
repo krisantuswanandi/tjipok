@@ -35,8 +35,10 @@ export function fetchProjects(page = 0) {
   return jiraRequest(`rest/api/3/project/search?startAt=${page}`);
 }
 
-export function fetchBoards(projectId: string) {
-  return jiraRequest(`rest/agile/1.0/board?projectKeyOrId=${projectId}`);
+export function fetchBoards(projectId: string, page = 0) {
+  return jiraRequest(
+    `rest/agile/1.0/board?projectKeyOrId=${projectId}&startAt=${page}`,
+  );
 }
 
 export function fetchSprints(boardId: string) {

@@ -9,7 +9,7 @@ async function fetchJiraAuth(code: string) {
       body: JSON.stringify({
         grant_type: "authorization_code",
         client_id: process.env.NEXT_PUBLIC_JIRA_CLIENT_ID,
-        client_secret: process.env.JIRA_SECRET_KEY,
+        client_secret: process.env.JIRA_CLIENT_SECRET,
         redirect_uri: process.env.NEXT_PUBLIC_JIRA_CALLBACK_URL,
         code,
       }),
